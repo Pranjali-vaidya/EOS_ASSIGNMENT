@@ -1,0 +1,33 @@
+Assignment
+1. The child process send two numbers to the parent process via message queue. The parent process calculate the sum and return via same message queue.
+The child process print the result and exit. The parent process wait for completion of the child and then exit.
+2. The child process send two numbers to the parent process via pipe. The parent process calculate the sum and return via another pipe. The child process
+print the result and exit. The parent process wait for completion of the child and then exit.
+3. Write a program to ﬁnd the size of the pipe buﬀer.
+4. Write a program that will launch two programs (e.g. who and wc). The output of ﬁrst program (e.g. who) should be given as input to second program (e.g. wc).
+
+
+
+
+int arr[2];
+pipe(arr);
+pid1 = fork();
+if(pid1 == 0) { // writer process
+close(arr[0]);
+// output redirection
+dup2(arr[1], 1); // stdout
+close(arr[1]);
+err1 = execlp("who", "who", NULL);
+}
+pid2 = fork();
+if(pid2 == 0) { // reader process
+close(arr[1]);
+// input redirection
+dup2(arr[0], 0); // stdin
+close(arr[0]);
+err2 = execlp("wc", "wc", NULL);
+}
+close(arr[1]); // parent neither writing to pipe
+close(arr[0]); // nor reading from pipe
+waitpid(pid1, &s1, 0);
+waitpid(pid2, &s2, 0);
